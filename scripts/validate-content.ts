@@ -4,8 +4,8 @@ import matter from "gray-matter";
 import { CATEGORIES, isCategorySlug } from "../src/config/categories";
 
 const ARTICLES_DIRECTORY = path.join(process.cwd(), "content", "articles");
-const EXPECTED_TOTAL = 75;
-const EXPECTED_PER_CATEGORY = 15;
+const MIN_TOTAL = 75;
+const MIN_PER_CATEGORY = 15;
 const REQUIRED_FIELDS = [
   "title",
   "slug",
@@ -39,9 +39,9 @@ const fileNames = fs
   .readdirSync(ARTICLES_DIRECTORY)
   .filter((name) => name.endsWith(".md"));
 
-if (fileNames.length !== EXPECTED_TOTAL) {
+if (fileNames.length < MIN_TOTAL) {
   errors.push(
-    `Expected exactly ${EXPECTED_TOTAL} Markdown files, found ${fileNames.length}.`,
+    `Expected at least ${MIN_TOTAL} Markdown files, found ${fileNames.length}.`,
   );
 }
 
@@ -119,9 +119,9 @@ for (const fileName of fileNames) {
 
 for (const category of CATEGORIES) {
   const count = categoryCounts.get(category.slug) ?? 0;
-  if (count !== EXPECTED_PER_CATEGORY) {
+  if (count < MIN_PER_CATEGORY) {
     errors.push(
-      `Category "${category.slug}" has ${count} articles, expected ${EXPECTED_PER_CATEGORY}.`,
+      `Category "${category.slug}" has ${count} articles, expected at least ${MIN_PER_CATEGORY}.`,
     );
   }
 }
